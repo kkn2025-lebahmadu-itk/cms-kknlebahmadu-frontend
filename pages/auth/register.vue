@@ -18,6 +18,7 @@
     </div>
     <button type="submit">Register</button>
   </form>
+	<p>Sudah punya akun ? <a href="/auth/login">Login</a></p>
 </template>
 
 <script setup>
@@ -40,7 +41,6 @@ const handleRegister = async () => {
   const result = await register(username.value, email.value, password.value)
   if (!result.success) {
 		console.log(result)
-    navigateTo('/')
   } else {
     navigateTo('/')
   }
