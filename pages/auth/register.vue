@@ -12,6 +12,10 @@
       <label>Password:</label>
       <input v-model="password" type="password" required />
     </div>
+		<div>
+      <label>Confirm Password:</label>
+      <input v-model="confirm_password" type="password" required />
+    </div>
     <button type="submit">Register</button>
   </form>
 </template>
@@ -23,15 +27,21 @@ import { ref } from 'vue'
 const username = ref('')
 const email = ref('')
 const password = ref('')
+const confirm_password = ref('')
 
 
 const handleRegister = async () => {
-	console.log(username.value, email.value, password.value)
+	if (password.value !== confirm_password.value) {
+    alert('Passwords do not match!')
+    password.value = ''
+    confirm_password.value = ''
+    return
+  }
   const result = await register(username.value, email.value, password.value)
   if (!result.success) {
 		console.log(result)
+    navigateTo('/')
   } else {
-		console.log(result)
     navigateTo('/')
   }
 }

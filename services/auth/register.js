@@ -1,7 +1,7 @@
 import api from '../api'
 
 const register = async (username, email, password) => {
-  try {
+    try {
     const response = await api.post('/api/auth/register', {
         username, email, password
     })
@@ -12,7 +12,7 @@ const register = async (username, email, password) => {
   } catch (error) {
     return {
       success: false,
-      message: error.response?.data?.message || 'Registration failed'
+      message: error.response?.data?.message || 'Terjadi Kesalahan'
     }
   }
 }
