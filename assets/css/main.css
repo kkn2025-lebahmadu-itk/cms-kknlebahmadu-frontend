@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+
+@theme {
+    --font-display: "Satoshi", "sans-serif";
+    --breakpoint-3xl: 1920px;
+    --color-KKNWhite: #ECECEC;
+    --color-KKNGreen: #48815E;
+    --color-KKNOrange: #EC9959;
+    --color-KKNBlack: #2A2A2A;
+    /* Tambahkan variabel lainnya sesuai kebutuhan */
+  }

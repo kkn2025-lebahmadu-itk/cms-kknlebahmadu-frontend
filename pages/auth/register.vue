@@ -22,13 +22,14 @@
 </template>
 
 <script setup>
-import register from '../../services/auth/register.js'
+// import register from '../../services/auth/register.js'
 import { ref } from 'vue'
 
 const username = ref('')
 const email = ref('')
 const password = ref('')
 const confirm_password = ref('')
+const {register} = useAuth()
 
 
 const handleRegister = async () => {

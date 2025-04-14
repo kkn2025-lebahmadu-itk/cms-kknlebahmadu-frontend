@@ -14,12 +14,12 @@
 </template>
 
 <script setup>
-import login from '../../services/auth/login.js'
+// import login from '../../services/auth/login.js'
 import { ref } from 'vue'
 
 const email = ref('')
 const password = ref('')
-
+const { login } = useAuth()
 const handleLogin = async () => {
   const result = await login(email.value, password.value)
   if (!result.success) {

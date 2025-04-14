@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const getAccessTokenf = async () => {
+const getAccessToken = async () => {
   try {
     const refreshToken = useCookie('refresh_token')
     const rawAxios = axios.create({
@@ -24,4 +24,4 @@ const getAccessTokenf = async () => {
   }
 }
 
-export default getAccessTokenf
+export default getAccessToken
