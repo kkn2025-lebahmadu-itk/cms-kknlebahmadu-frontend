@@ -22,8 +22,9 @@ const isLoggedIn = computed(() => {
         <!-- <NuxtLink href="/kontak" class="hover:underline">Kontak</NuxtLink> -->
 
         <template v-if="isLoggedIn">
-<NuxtLink href="/surat" class="hover:underline">Surat</NuxtLink>
-<NuxtLink href="/aspiration" class="hover:underline">Aspiration</NuxtLink>
+					<NuxtLink href="/admin" class="hover:underline">Rekap</NuxtLink>
+					<NuxtLink href="/surat" class="hover:underline">Surat</NuxtLink>
+					<NuxtLink href="/aspiration" class="hover:underline">Aspiration</NuxtLink>
           <NuxtLink href="/manage-profile" class="hover:underline">Manage Profile</NuxtLink>
           <NuxtLink href="/auth/logout" class="hover:underline">Logout</NuxtLink>
           <NuxtLink href="/admin" class="hover:underline">Admin</NuxtLink>
