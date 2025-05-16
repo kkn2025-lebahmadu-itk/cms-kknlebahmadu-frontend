@@ -28,6 +28,8 @@ export const useAuth = () => {
             const response = await $api.post('/api/auth/login', {
                 email,
                 password
+            }, {
+                isPublic: true
             })
             return {
                 success: true,

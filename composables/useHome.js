@@ -14,7 +14,9 @@ export const useHome = () => {
     error.value = null
 
     try {
-      const res = await $api.get('/api/home')
+      const res = await $api.get('/api/home',{
+        isPublic: true
+    })
       response.value = res
     } catch (err) {
       error.value = err.response?.data?.message || 'Terjadi Kesalahan'

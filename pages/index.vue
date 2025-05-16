@@ -1,114 +1,265 @@
 <script setup>
-// import home from '../services/home.js'
-// import createKeluhan from '../services/keluhan/create.js'
+import { ref, computed, onMounted } from 'vue'
+import { useKeluhan } from '../composables/useKeluhan'
+import { useHome } from '../composables/useHome'
+import { useProfile } from '../composables/useProfile'
+import { useRouter } from 'vue-router'
 
-// const { data: response, pending, error } = useAsyncData('home', home, {
-//     server: false
-// })
-const {createKeluhan} = useKeluhan()
-const { response, pending, error, fetchHome } = useHome()
-onMounted(() => {
-  fetchHome()
-})
-console.log('response', response)
+const router = useRouter()
+const { createKeluhan } = useKeluhan()
+const { response: homeRes, pending: homePending, error: homeError, fetchHome } = useHome()
+const { response: profileRes, pending: profilePending, error: profileError, fetchAllProfile } = useProfile()
 
-console.log(response.data)
-const news = computed(() => response.value?.data?.data?.news || [])
-const gallery = computed(() => response.value?.data?.data?.galeri || [])
 
-// 🆕 Complaint form state
+// aspirasi
+const { createReport, pending: reportPending, error: reportError } = useReport()
+const aspirasiTitle = ref('')
+const aspirasiContent = ref('')
+const aspirasiMessage = ref('')
+const submittingAspirasi = ref(false)
+
+const submitAspirasi = async () => {
+  if (!aspirasiTitle.value || !aspirasiContent.value) {
+    aspirasiMessage.value = 'Judul dan isi aspirasi harus diisi.'
+    return
+  }
+  submittingAspirasi.value = true
+  aspirasiMessage.value = ''
+  try {
+    await createReport({ title: aspirasiTitle.value, content: aspirasiContent.value })
+    aspirasiMessage.value = 'Aspirasi berhasil dikirim.'
+    aspirasiTitle.value = ''
+    aspirasiContent.value = ''
+  } catch {
+    aspirasiMessage.value = reportError.value || 'Gagal mengirim aspirasi.'
+  } finally {
+    submittingAspirasi.value = false
+  }
+}
+
+// komputasi data
+const news = computed(() => homeRes.value?.data?.data?.news || [])
+const gallery = computed(() => homeRes.value?.data?.data?.galeri || [])
+
+const profileInti = computed(() => profileRes.value?.inti || [])
+const profileTambahan = computed(() => profileRes.value?.tambahan || [])
+
+// State formulir keluhan
 const complaintUser = ref('')
 const complaintContent = ref('')
 const submitting = ref(false)
 const submitMessage = ref('')
 
-// 🆕 Submit handler
 const submitComplaint = async () => {
   if (!complaintUser.value || !complaintContent.value) {
     submitMessage.value = 'Nama dan isi keluhan harus diisi.'
     return
   }
-
   submitting.value = true
   submitMessage.value = ''
-
   try {
-    // This assumes your backend accepts this structure
-    const response = await createKeluhan(complaintUser.value, complaintContent.value)
-		console.log(response)
-  } catch (err) {
+    await createKeluhan(complaintUser.value, complaintContent.value)
+    submitMessage.value = 'Keluhan berhasil dikirim.'
+  } catch {
     submitMessage.value = 'Gagal mengirim keluhan.'
   } finally {
     submitting.value = false
   }
 }
+
+// Carousel
+const currentSlide = ref(0)
+let slideInterval = null
+
+const startAutoSlide = () => {
+  stopAutoSlide()
+  slideInterval = setInterval(() => {
+    nextSlide()
+  }, 5000)
+}
+const stopAutoSlide = () => {
+  if (slideInterval) clearInterval(slideInterval)
+}
+const nextSlide = () => {
+  if (gallery.value.length === 0) return
+  currentSlide.value = (currentSlide.value + 1) % gallery.value.length
+  restartAutoSlide()
+}
+const prevSlide = () => {
+  if (gallery.value.length === 0) return
+  currentSlide.value = (currentSlide.value - 1 + gallery.value.length) % gallery.value.length
+  restartAutoSlide()
+}
+const restartAutoSlide = () => {
+  stopAutoSlide()
+  startAutoSlide()
+}
+
+// Navigate to news detail
+const goToNewsDetail = (slug) => {
+  router.push(`/berita/${slug}`)
+}
+
+
+const expandedItemIds = ref([])
+
+const isExpanded = (id) => expandedItemIds.value.includes(id)
+
+const toggleExpand = (id) => {
+  if (isExpanded(id)) {
+    expandedItemIds.value = expandedItemIds.value.filter(item => item !== id)
+  } else {
+    expandedItemIds.value.push(id)
+  }
+}
+
+// Untuk mendeteksi overflow secara dinamis
+const isOverflowing = ref({}) // Map id -> boolean
+
+const setOverflowStatus = (id, el) => {
+  if (!el) return
+  isOverflowing.value[id] = el.scrollHeight > el.clientHeight
+}
+
+const stripHtml = (html) => {
+  const temp = document.createElement("div")
+  temp.innerHTML = html
+  return temp.textContent || temp.innerText || ""
+}
+
+
+
+const goToPage = (page) => {
+  if (page === '...') return
+  currentPage.value = page
+}
+
+onMounted(() => {
+  fetchHome()
+  fetchAllProfile()
+  startAutoSlide()
+})
 </script>
 
 <template>
-  <Header />
-  <section class="p-6 max-w-max mx-auto bg-KKNwhite">
-    <div></div>
-    <h1 class="text-3xl font-bold mb-6">🏠 Beranda</h1>
-
-    <div v-if="pending" class="text-gray-600">🔄 Loading...</div>
-    <div v-else-if="error" class="text-red-600">❌ Error: {{ error }}</div>
-
-    <div class="container bg-KKNWhite  p-[15px] rounded-[20px] drop-shadow-md drop-shadow-KKNBlack" v-else>
-      <!-- Berita -->
-      <section class="mb-10">
-        <h2 class="text-xl font-semibold mb-3">📰 Berita</h2>
-        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div v-for="item in news || []" :key="item.id" class="p-4 border rounded-lg shadow hover:shadow-md transition">
-            <News :data="item" />
-          </div>
-        </div>
-      </section>
-
-      <!-- Galeri -->
-      <section class="mb-10">
-        <h2 class="text-xl font-semibold mb-3">📸 Galeri</h2>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          <div v-for="item in gallery || []" :key="item.id" class="border rounded overflow-hidden">
-            <img :src="item.path" :alt="item.caption || 'Gallery Image'" class="w-full h-48 object-cover" />
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <!-- Form Keluhan -->
-    <section class="mt-12 max-w-md">
-    <div class="container bg-KKNWhite  p-[15px] rounded-[20px] drop-shadow-md drop-shadow-KKNBlack">
-
-      <h2 class="text-xl font-semibold mb-4">📝 Formulir Keluhan</h2>
-
-      <form @submit.prevent="submitComplaint" class="space-y-4">
-        <div>
-          <label class="block mb-1 font-medium">Nama</label>
-          <input v-model="complaintUser" type="text" class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        </div>
-
-        <div>
-          <label class="block mb-1 font-medium">Isi Keluhan</label>
-          <textarea v-model="complaintContent" rows="4" class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-        </div>
-
-        <div>
-          <button
-            type="submit"
-            class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold transition disabled:opacity-50"
-            :disabled="submitting"
-          >
-            {{ submitting ? 'Mengirim...' : 'Kirim Keluhan' }}
-          </button>
-          <button>
-            <NuxtLink to="/auth/login" class="text-blue-600 bg-amber-100 hover:underline mt-2 block">Login</NuxtLink>
-          </button>
-        </div>
-
-        <p class="text-sm text-green-600" v-if="submitMessage">{{ submitMessage }}</p>
-      </form>
+<!-- Galeri Section -->
+<section class="px-6 pt-6 w-full max-w-screen-xl mx-auto animate-fade-in">
+  <h2 class="text-xl font-semibold mb-4 text-center">Galeri</h2>
+  <div class="relative w-full overflow-hidden rounded-lg shadow-2xl">
+    <div class="flex transition-transform duration-500" :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
+      <div v-for="(item, index) in gallery" :key="index" class="flex-shrink-0 w-full">
+        <img :src="item.path" :alt="item.caption || `Gallery Image ${index+1}`" class="w-full h-80 object-cover" />
       </div>
-    </section>
-  
+    </div>
+    <button @click="prevSlide" class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-100 p-2 rounded-full shadow-md">‹</button>
+    <button @click="nextSlide" class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-100 p-2 rounded-full shadow-md">›</button>
+  </div>
+
+  <div class="flex justify-center mt-4 space-x-3">
+    <button
+      v-for="(item, index) in gallery"
+      :key="index"
+      @click="() => { currentSlide = index; restartAutoSlide() }"
+      class="w-3 h-3 rounded-full"
+      :class="[currentSlide === index ? 'bg-KKNOrange' : 'bg-black', 'transition-all duration-300']"
+    ></button>
+  </div>
+</section>
+
+<!-- Berita & Profil Section -->
+<section class="p-6 w-full max-w-screen-xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
+  <!-- Berita -->
+  <main class="lg:col-span-2 space-y-12">
+    <h1 class="text-3xl font-bold mb-6">Beranda</h1>
+
+
+
+    <div v-if="homePending" class="text-gray-600">🔄 Loading...</div>
+    <div v-else-if="homeError" class="text-red-600">❌ Error: {{ homeError }}</div>
+    <div v-else class="space-y-6">
+      <div
+        v-for="item in news"
+        :key="item.id"
+        class="max-h-[40dvh] p-5 flex flex-col sm:flex-row bg-white rounded-lg overflow-hidden shadow-2xl hover:-translate-y-1 transition-all duration-500 cursor-pointer"
+        @click="goToNewsDetail(item.slug)"
+      >
+        <img :src="item.thumbnail_url" :alt="item.title" class="w-full sm:w-1/3 h-48 object-cover border-2 border-gray-300" />
+        <div class="p-4 flex-1">
+          <h3 class="text-lg font-semibold mb-2">{{ item.title }}</h3>
+
+            <article class="flex flex-col gap-2">
+              <p class="text-gray-700">
+                {{ stripHtml(item.content).slice(0, 200) }}...
+              </p>
+              <button
+                @click.stop="goToNewsDetail(item.slug)"
+                class="text-KKNOrange font-medium hover:underline focus:outline-none self-start"
+              >
+                Baca Selengkapnya
+              </button>
+            </article>
+
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Profil -->
+  <aside class="bg-white p-4 mt-15 rounded-lg shadow-2xl">
+    <h2 class="text-lg font-semibold mb-3">👤 Profil RT</h2>
+    <div v-if="profilePending" class="text-gray-600">🔄 Memuat profil...</div>
+    <div v-else-if="profileError" class="text-red-600">❌ {{ profileError }}</div>
+    <div v-else>
+      <h3 class="font-medium mt-2">📌 Data Inti</h3>
+      <ul class="list-disc list-inside mb-10">
+        <li v-for="item in profileInti" :key="item.id">{{ item.key }}: {{ item.value }}</li>
+      </ul>
+      <h3 class="font-medium">➕ Data Tambahan</h3>
+      <ul class="list-disc list-inside mb-10">
+        <li v-for="item in profileTambahan" :key="item.id">{{ item.key }}: {{ item.value }}</li>
+      </ul>
+    </div>
+  </aside>
+</section>
+
+  <!-- Form Aspirasi -->
+  <section class="px-6 py-8 m-5 w-full max-w-[82.5dvw] mx-auto bg-white rounded-lg shadow-2xl animate-fade-in">
+    <h2 class="text-xl font-semibold mb-4">Kirim Aspirasi</h2>
+    <div class="space-y-4">
+      <input
+        v-model="aspirasiTitle"
+        type="text"
+        placeholder="Judul Aspirasi"
+        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring"
+      />
+      <textarea
+        v-model="aspirasiContent"
+        rows="4"
+        placeholder="Tulis aspirasi Anda di sini..."
+        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring"
+      ></textarea>
+      <button
+        @click="submitAspirasi"
+        :disabled="submittingAspirasi || reportPending"
+        class="px-4 py-2 bg-KKNOrange text-white rounded hover:bg-orange-600 transition disabled:opacity-50"
+      >
+        {{ submittingAspirasi || reportPending ? 'Mengirim...' : 'Kirim Aspirasi' }}
+      </button>
+      <p v-if="aspirasiMessage" :class="aspirasiMessage.includes('berhasil') ? 'text-green-600' : 'text-red-600'">
+        {{ aspirasiMessage }}
+      </p>
+    </div>
   </section>
 </template>
+
+<style scoped>
+@keyframes fade-in {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fade-in 0.7s ease-out forwards;
+}
+</style>
