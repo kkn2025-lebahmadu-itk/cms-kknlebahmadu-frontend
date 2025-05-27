@@ -144,7 +144,7 @@ onMounted(() => {
 <template>
 <!-- Galeri Section -->
 <section class="px-6 pt-6 w-full max-w-screen-xl mx-auto animate-fade-in">
-  <h2 class="text-xl font-semibold mb-4 text-center">Galeri</h2>
+  <!-- <h2 class="text-xl font-semibold mb-4 text-center">Galeri</h2> -->
   <div class="relative w-full overflow-hidden rounded-lg shadow-2xl">
     <div class="flex transition-transform duration-500" :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
       <div v-for="(item, index) in gallery" :key="index" class="flex-shrink-0 w-full">
@@ -161,7 +161,7 @@ onMounted(() => {
       :key="index"
       @click="() => { currentSlide = index; restartAutoSlide() }"
       class="w-3 h-3 rounded-full"
-      :class="[currentSlide === index ? 'bg-KKNOrange' : 'bg-black', 'transition-all duration-300']"
+      :class="[currentSlide === index ? 'bg-KKNOrange' : 'bg-black dark:bg-KKNWhite', 'transition-all duration-300']"
     ></button>
   </div>
 </section>
@@ -180,7 +180,7 @@ onMounted(() => {
       <div
         v-for="item in news"
         :key="item.id"
-        class="max-h-[40dvh] p-5 flex flex-col sm:flex-row bg-white rounded-lg overflow-hidden shadow-2xl hover:-translate-y-1 transition-all duration-500 cursor-pointer"
+        class="max-h-[40dvh] p-5 flex flex-col sm:flex-row bg-white dark:bg-KKNBlack rounded-lg overflow-hidden shadow-2xl hover:-translate-y-1 transition-all duration-500 cursor-pointer"
         @click="goToNewsDetail(item.slug)"
       >
         <img :src="item.thumbnail_url" :alt="item.title" class="w-full sm:w-1/3 h-48 object-cover border-2 border-gray-300" />
@@ -188,7 +188,7 @@ onMounted(() => {
           <h3 class="text-lg font-semibold mb-2">{{ item.title }}</h3>
 
             <article class="flex flex-col gap-2">
-              <p class="text-gray-700">
+              <p class="text-gray-700 dark:text-KKNWhite">
                 {{ stripHtml(item.content).slice(0, 200) }}...
               </p>
               <button
@@ -207,7 +207,11 @@ onMounted(() => {
   </main>
 
   <!-- Profil -->
-  <aside class="bg-white p-4 mt-15 rounded-lg shadow-2xl">
+  <aside class="bg-white dark:bg-KKNBlack p-4 mt-15 rounded-lg shadow-2xl">
+    
+
+
+
     <h2 class="text-lg font-semibold mb-3">👤 Profil RT</h2>
     <div v-if="profilePending" class="text-gray-600">🔄 Memuat profil...</div>
     <div v-else-if="profileError" class="text-red-600">❌ {{ profileError }}</div>
@@ -216,16 +220,27 @@ onMounted(() => {
       <ul class="list-disc list-inside mb-10">
         <li v-for="item in profileInti" :key="item.id">{{ item.key }}: {{ item.value }}</li>
       </ul>
+      
+
       <h3 class="font-medium">➕ Data Tambahan</h3>
       <ul class="list-disc list-inside mb-10">
         <li v-for="item in profileTambahan" :key="item.id">{{ item.key }}: {{ item.value }}</li>
       </ul>
     </div>
+    <div class="w-full  rounded-xl overflow-hidden mb-4">
+  <iframe
+    src="https://www.google.com/maps/d/embed?mid=1ykpdVCCu4adAxZw26EP_a63w8MaanM8&hl=in&ehbc=2E312F"
+    class="w-full h-[40dvh]"
+    style="border:0;"
+    allowfullscreen
+    loading="lazy"
+  ></iframe>
+</div>
   </aside>
 </section>
 
   <!-- Form Aspirasi -->
-  <section class="px-6 py-8 m-5 w-full max-w-[82.5dvw] mx-auto bg-white rounded-lg shadow-2xl animate-fade-in">
+  <section class="px-6 py-8 m-5 w-full max-w-[60dvw] mx-auto bg-white dark:bg-KKNBlack rounded-lg shadow-2xl animate-fade-in">
     <h2 class="text-xl font-semibold mb-4">Kirim Aspirasi</h2>
     <div class="space-y-4">
       <input

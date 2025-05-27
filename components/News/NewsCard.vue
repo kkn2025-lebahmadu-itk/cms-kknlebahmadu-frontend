@@ -4,7 +4,7 @@
     class="cursor-pointer bg-white rounded-lg shadow-md hover:shadow-lg transition flex flex-col overflow-hidden"
   >
     <!-- WRAPPER GAMBAR -->
-    <div v-if="thumbnail" class="w-full h-[40dvh] flex items-center justify-center bg-gray-100 overflow-hidden">
+    <div v-if="thumbnail" class="w-full h-[40dvh] flex items-center justify-center bg-gray-100 dark:bg-gray-800 overflow-hidden">
       <img
         v-if="thumbnail"
         :src="thumbnail"
@@ -14,11 +14,11 @@
     </div>
 
     <!-- KONTEN & TOMBOL -->
-    <div class="p-4 flex flex-col flex-1">
+    <div class="p-4 flex flex-col flex-1 bg-KKNWhite dark:bg-KKNBlack">
       <div class="flex-1 overflow-auto max-h-[40vh]">
         <h2 class="text-xl font-semibold mb-2">{{ title }}</h2>
         <article class="prose prose-sm sm:prose lg:prose-lg xl:prose-2xl max-w-none mb-4">
-          <div v-html="content"></div>
+          <div class="text-KKNBlack dark:text-KKNWhite" v-html="content"></div>
         </article>
       </div>
       <div class="flex space-x-2 mt-2">

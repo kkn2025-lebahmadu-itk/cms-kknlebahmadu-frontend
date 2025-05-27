@@ -1,5 +1,6 @@
 export const useReport = () => {
-    const response = ref(null)
+    const response = ref({ reports: [] }) // bukan null
+
     const pending = ref(false)
     const error = ref(null)
     const { $api } = useNuxtApp()
@@ -9,6 +10,7 @@ export const useReport = () => {
         try{
             const res = await $api.get('api/report')
             response.value = res.data
+            console.log(res.data)
         } catch (err) {
             error.value = err.response?.data?.message || 'Terjadi Kesalahan'
         } finally {
@@ -20,7 +22,7 @@ export const useReport = () => {
         pending.value = true
         error.value = null
         try{
-            const res = await $api.post('api/report', data, {isPublic: true})
+            const res = await $api.post('api/report', data)
             response.value = res.data
 
         }catch (err) {

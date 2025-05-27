@@ -82,4 +82,11 @@ const handleRegister = async () => {
     navigateTo('/')
   }
 }
+
+
+
+
+definePageMeta({
+  layout: 'none',
+})
 </script>

@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useNuxtApp } from '#app'
 
 export const useAdminManagement = () => {
+  const router = useRouter()
   const response = ref(null)
   const pending = ref(false)
   const error = ref(null)
@@ -27,6 +28,13 @@ export const useAdminManagement = () => {
     } catch (err) {
         console.log('error', err)
       error.value = err.response?.data?.message || 'Terjadi Kesalahan'
+      if (err.response?.status === 401) {
+        // Handle unauthorized error
+        // For example, redirect to login page or show a message
+      }
+      if (err.response?.status === 403) {
+        router.push('/forbidden')
+      }
       
     } finally {
       pending.value = false

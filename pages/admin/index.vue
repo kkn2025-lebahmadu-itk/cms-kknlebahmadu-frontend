@@ -19,8 +19,8 @@
   
       <!-- Tabel User dan Admin -->
       <div class="overflow-x-auto">
-        <table class="w-full bg-white shadow rounded border">
-          <thead class="bg-gray-100 text-left">
+        <table class="w-full bg-white dark:bg-stone-800  shadow rounded border">
+          <thead class="bg-gray-100  dark:bg-stone-900  text-left">
             <tr>
               <th class="px-4 py-2 border">ID</th>
               <th class="px-4 py-2 border">Username</th>
@@ -32,7 +32,7 @@
             <tr
               v-for="user in response?.users || []"
               :key="user.id"
-              class="hover:bg-gray-50"
+              class="hover:bg-gray-50 dark:hover:bg-stone-700 transition duration-200"
             >
               <td class="px-4 py-2 border">{{ user.id }}</td>
               <td class="px-4 py-2 border">{{ user.username }}</td>

@@ -1,9 +1,17 @@
+<script setup>
+import { useDarkMode } from '~/composables/useDarkMode'
+const { isDark } = useDarkMode()
+</script>
+
 <template>
+  <!-- Tambahkan class dinamis "dark" di root -->
+  <div :class="{ dark: isDark }">
     <Header />
-    <div class="bg-gray-300 min-h-screen flex flex-col justify-between">
-        <main class="flex-grow">
-            <NuxtPage />
-        </main>
-        <Footer />
+    <div class="bg-white text-black dark:bg-gray-900 dark:text-white min-h-screen flex flex-col justify-between transition-colors duration-300">
+      <main class="flex-grow">
+        <NuxtPage />
+      </main>
+      <Footer />
     </div>
+  </div>
 </template>

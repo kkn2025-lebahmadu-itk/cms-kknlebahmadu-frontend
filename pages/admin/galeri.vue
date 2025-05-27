@@ -1,17 +1,17 @@
 <template>
   <section class="p-6 max-w-screen-2xl mx-auto bg-KKNwhite space-y-10">
-    <h1 class="text-3xl font-bold">📷 Galeri Foto</h1>
+    <h1 class="text-3xl font-bold">Galeri Foto</h1>
 
     <div v-if="pending" class="text-gray-600">🔄 Loading...</div>
     <div v-else-if="error" class="text-red-600">❌ Error: {{ error }}</div>
 
-    <!-- <div class="container  bg-KKNWhite p-[15px] rounded-[20px] drop-shadow-md drop-shadow-KKNBlack" v-else> -->
+    <div class="container  bg-KKNWhite dark:bg-KKNBlack p-[15px] rounded-[20px] drop-shadow-md drop-shadow-KKNBlack" v-else>
       
 
           <!-- GALERI UMUM -->
-    <!-- <div class="bg-white p-4 rounded-2xl shadow-md mb-">
+    <div class="bg-white dark:bg-stone-900 p-4 rounded-2xl shadow-md mb-">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-2xl font-semibold">📸 Foto Galeri Umum</h2>
+        <h2 class="text-2xl font-semibold">Foto Galeri Umum</h2>
         <button @click="openUploadModal" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold transition">
           + Upload Foto
         </button>
@@ -36,11 +36,11 @@
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
 
     <!-- FOTO BERITA -->
-    <!-- <div class="bg-white p-4 mt-5 rounded-2xl shadow-md">
-      <h2 class="text-2xl font-semibold mb-4">📰 Foto dari Berita</h2>
+    <div class="bg-white dark:bg-stone-900 p-4 mt-5 rounded-2xl shadow-md">
+      <h2 class="text-2xl font-semibold mb-4">Foto dari Berita</h2>
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         <div v-for="item in newsImages" :key="'news-' + item.id" class="border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition">
           <div class="relative">
@@ -57,60 +57,11 @@
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
   
 
       
-    <!-- </div> -->
-
-    <!-- Container utama -->
-<div class="container bg-white dark:bg-KKNBlack p-[15px] rounded-[20px] drop-shadow-md drop-shadow-KKNBlack" v-else>
-  <!-- Judul Galeri -->
-  <div class="p-4 rounded-2xl mb-6">
-    <h2 class="text-2xl font-semibold mb-4">📸 Foto Galeri Umum</h2>
-    <div class="grid grid-cols-3 gap-4">
-      <div v-for="item in galleryImages" :key="'gallery-' + item.id" class="border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition">
-        <div class="relative">
-          <img :src="item.imagePath" :alt="item.caption" class="w-full h-48 object-cover" />
-          <div class="absolute top-2 right-2 flex space-x-2">
-            <button @click="showDetail(item)" class="bg-blue-500 p-1 rounded text-white hover:bg-blue-600">
-              <span class="sr-only">Detail</span> 🔍
-            </button>
-          </div>
-        </div>
-        <div class="p-2">
-          <p class="text-sm truncate">
-  {{ new Date(item.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) }}
-</p>
-
-          <!-- <p class="text-sm truncate">{{ item.created_at || 'No caption' }}</p> -->
-        </div>
-      </div>
     </div>
-  </div>
-
-  <!-- Galeri dari Berita -->
-  <div class="p-4 rounded-2xl shadow-md mt-6">
-    <h2 class="text-2xl font-semibold mb-4">📰 Foto dari Berita</h2>
-    <div class="grid grid-cols-3 gap-4">
-      <div v-for="item in newsImages" :key="'news-' + item.id" class="border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition">
-        <div class="relative">
-          <img :src="item.imagePath" :alt="item.title" class="w-full h-48 object-cover" />
-          <div class="absolute top-2 right-2">
-            <button @click="showDetail(item)" class="bg-blue-500 p-1 rounded text-white hover:bg-blue-600">
-              🔍
-            </button>
-          </div>
-        </div>
-        <div class="p-2">
-          <p class="text-sm font-semibold truncate">{{ item.title }}</p>
-          <p class="text-xs text-gray-500">🖋 {{ item.poster?.username || 'Unknown' }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 
     <!-- Detail Modal -->
     <div v-if="isDetailModalOpen" class="fixed inset-0 bg-black/50  flex items-center justify-center z-50 p-4">
@@ -162,7 +113,7 @@
 
     <!-- Upload Modal -->
     <div v-if="isUploadModalOpen" @click.self="closeUploadModal" class="fixed inset-0 bg-black/50  flex items-center justify-center z-50 p-4 opacity-100">
-      <div class="bg-white rounded-lg max-w-md w-full">
+      <div class="bg-white  dark:bg-stone-900 rounded-lg max-w-md w-full">
         <div class="p-6">
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-xl font-bold">Upload Foto</h3>
