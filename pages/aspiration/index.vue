@@ -1,9 +1,10 @@
 <template>
-  <section class="py-6 bg-gray-50">
+  <section class="py-6 bg-gray-50 dark:bg-gray-800">
     <div class="container mx-auto px-4">
-      <h1 class="text-3xl font-bold mb-6">📝 Aspirasi</h1>
+      <h1 class="text-3xl font-bold mb-6 text-black dark:text-white">📝 Aspirasi</h1>
 
-      <!-- Form Submit -->
+
+            <!-- Form Submit -->
       <!-- <form @submit.prevent="handleSubmit" class="mb-8 space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <input
@@ -32,17 +33,19 @@
       </form> -->
 
       <!-- List Aspirasi -->
-      <div v-if="pending && !formSubmitting" class="text-gray-600">🔄 Memuat aspirasi...</div>
-      <div v-else-if="!complaints.length" class="text-gray-500">Belum ada aspirasi.</div>
+      <div v-if="pending && !formSubmitting" class="text-gray-600 dark:text-gray-300">🔄 Memuat aspirasi...</div>
+      <div v-else-if="!complaints.length" class="text-gray-500 dark:text-gray-400">Belum ada aspirasi.</div>
       <div v-else class="space-y-4">
         <div
           v-for="item in complaints"
           :key="item.id"
-          class="container mx-auto max-w-[65vw] bg-white p-6 border border-gray-300 rounded-lg shadow hover:shadow-lg transition relative"
+          class="container mx-auto max-w-[65vw] bg-white dark:bg-KKNBlack p-6 border border-gray-300 dark:border-KKNBlack rounded-lg shadow hover:shadow-lg transition relative"
         >
-          <p class="text-sm text-gray-700 mb-2"><strong>{{ item.user }}</strong></p>
-          <p class="text-gray-800 mb-4">{{ item.content }}</p>
-          <p class="text-xs text-gray-500 mb-4">
+          <p class="text-sm text-gray-700 dark:text-gray-200 mb-2">
+            <strong>{{ item.user }}</strong>
+          </p>
+          <p class="text-gray-800 dark:text-white mb-4">{{ item.content }}</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">
             {{ new Date(item.created_at).toLocaleString('id-ID', {
               day: 'numeric',
               month: 'long',
@@ -55,8 +58,8 @@
             <span
               :class="{
                 'text-yellow-600': item.status === 'pending',
-                'text-green-600': item.status === 'valid',
-                'text-red-600': item.status === 'tidak_valid'
+                'text-green-500': item.status === 'valid',
+                'text-red-500': item.status === 'tidak_valid'
               }"
               class="font-semibold uppercase text-xs"
             >
@@ -84,6 +87,7 @@
     </div>
   </section>
 </template>
+
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'

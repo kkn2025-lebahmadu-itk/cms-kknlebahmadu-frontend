@@ -1,25 +1,27 @@
 <template>
   <div class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold mb-6">News</h1>
-    <NuxtLink
-        to="/berita/create"
-        class="inline-block mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-      >
-        Add News
-      </NuxtLink>
+    <NuxtLink v-if="isLoggedIn"
+      to="/admin/berita/create"
+      class="inline-block mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+    >
+      Add News
+    </NuxtLink>
+
+    <!-- Loading -->
     <div v-if="pending" class="flex justify-center items-center py-12">
       <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
     </div>
 
-    <div v-else-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+    <!-- Error -->
+    <div v-else-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
       <span class="block sm:inline">{{ error }}</span>
     </div>
-    
 
-    <div v-else-if="paginatedNews.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    
+    <!-- News List -->
+    <!-- <div v-else-if="newsList.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <NewsCard
-        v-for="item in paginatedNews"
+        v-for="item in newsList"
         :key="item.id"
         :title="item.title"
         :content="item.content"
@@ -27,11 +29,29 @@
         :thumbnail="item.thumbnail_url"
         @delete="confirmDelete"
       />
-    </div>
+    </div> -->
+<div class="container mx-auto p-0">
+    <div class="grid grid-cols-1 gap-4">
+      <NewsCardAdmin
+        v-for="news in newsList"
+        :key="news.slug"
+        :title="news.title"
+        :content="news.content"
+        :slug="news.slug"
+        :thumbnail="news.thumbnail_url"
+        :is-logged-in="isLoggedIn"
+        @delete="confirmDelete"
+      />
 
-    
+
+    </div>
+  </div>
+
+
+
+    <!-- Pagination -->
     <Pagination
-      v-if="response && response.data && response.data.length > postsPerPage"
+      v-if="totalPages > 1"
       :currentPage="currentPage"
       :totalPages="totalPages"
       @prev="prevPage"
@@ -46,63 +66,79 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import Swal from 'sweetalert2'
+import { ref, computed, onMounted, watch } from 'vue'
 import NewsCard from '~/components/News/NewsCard.vue'
 import Pagination from '~/components/News/Pagination.vue'
 
-const { response, pending, error, fetchAllNews, deleteNews } = useNews()
+const refreshToken = useCookie('refresh_token')
+const isLoggedIn = computed(() => {
+  return !!refreshToken.value
+})
 
-const postsPerPage = 10
+const { response, pending, error, fetchNewsByPage, deleteNews } = useNews()
+
 const currentPage = ref(1)
+const postsPerPage = 3
 
-const paginatedNews = computed(() => {
-  if (!response.value || !response.value.data) return []
-  const start = (currentPage.value - 1) * postsPerPage
-  const end = start + postsPerPage
-  return response.value.data.slice(start, end)
+// Ambil list berita dari response
+const newsList = computed(() => {
+  return response.value?.results?.data || []
 })
 
+// Hitung total halaman
 const totalPages = computed(() => {
-  if (!response.value || !response.value.data) return 1
-  return Math.ceil(response.value.data.length / postsPerPage)
+  const count = response.value?.count || 0
+  return Math.ceil(count / postsPerPage)
 })
 
+// Navigasi halaman
 const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++
-  }
+  if (currentPage.value < totalPages.value) currentPage.value++
 }
-
 const prevPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--
-  }
+  if (currentPage.value > 1) currentPage.value--
 }
-
 const goToPage = (page) => {
   currentPage.value = page
 }
 
+// Delete dan refresh
 const confirmDelete = async (slug) => {
-  if (confirm('Apakah Anda yakin ingin menghapus berita ini?')) {
-    await deleteNews(slug)
-    
-    if (!error.value) {
-      await fetchAllNews()
-      alert('Berita berhasil dihapus')
-      if (currentPage.value > totalPages.value) {
-        currentPage.value = totalPages.value
+  const result = await Swal.fire({
+    title: 'Yakin ingin menghapus berita ini?',
+    text: 'Berita yang dihapus tidak dapat dikembalikan.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Ya, hapus',
+    cancelButtonText: 'Batal'
+  })
+  await fetchNewsByPage(currentPage.value)
+
+  if (result.isConfirmed) {
+    try {
+      await deleteNews(slug)
+      await fetchNewsByPage(currentPage.value)
+      if (!error.value) {
+        await fetchNewsByPage(currentPage.value)
+        await Swal.fire('Berhasil', 'Berita berhasil dihapus.', 'success')
+        loadNews()
+      } else {
+        await Swal.fire('Error', error.value, 'error')
       }
+    } catch (err) {
+      await Swal.fire('Error', err?.message || 'Terjadi kesalahan saat menghapus berita.', 'error')
     }
   }
 }
 
-onMounted(async () => {
-  await fetchAllNews()
-})
 
+// Fetch saat awal dan saat currentPage berubah
+const loadNews = async () => {
+  await fetchNewsByPage(currentPage.value)
+}
 
-definePageMeta({
- layout: 'admin',
-})
+onMounted(loadNews)
+
+watch(currentPage, loadNews)
 </script>

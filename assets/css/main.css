@@ -123,6 +123,122 @@
     --sidebar-ring: oklch(0.439 0 0);
 }
 
+/* ==== TOOLBAR HEIGHT & SPACING OPTIMIZED ==== */
+
+.ql-toolbar {
+  background-color: white;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem; /* lebih ramping */
+}
+
+/* Semua grup format */
+.ql-toolbar .ql-formats {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0 !important;
+}
+
+/* Tombol dan label */
+.ql-toolbar button,
+.ql-toolbar .ql-picker-label {
+  height: 1.75rem;       /* lebih pendek dari 2.25rem */
+  min-width: 1.75rem;
+  padding: 0 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  box-sizing: border-box;
+  line-height: 1;
+}
+
+/* Dropdown wrapper */
+.ql-toolbar .ql-picker {
+  height: 1.75rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Dropdown arrow spacing */
+.ql-toolbar .ql-picker-label::after {
+  margin-left: 0.25rem;
+}
+
+/* Ikon SVG */
+.ql-toolbar svg {
+  width: 1rem;
+  height: 1rem;
+  display: block;
+  stroke-width: 1.5;
+}
+
+/* Ukuran font toolbar konsisten */
+.ql-toolbar,
+.ql-toolbar * {
+  font-size: 0.75rem; /* text-smaller */
+}
+
+/* ==== DARK MODE ==== */
+.dark .ql-toolbar {
+  background-color: #2a2a2a;
+  border-color: #374151;
+  color: #e5e7eb;
+}
+
+.dark .ql-toolbar button,
+.dark .ql-toolbar .ql-picker-label,
+.dark .ql-toolbar .ql-picker-item {
+  color: #e5e7eb;
+}
+
+/* Aktif */
+.dark .ql-toolbar button.ql-active,
+.dark .ql-toolbar .ql-picker-label.ql-active {
+  color: #60a5fa;
+}
+
+.dark .ql-toolbar button.ql-active .ql-stroke,
+.dark .ql-toolbar .ql-picker-label.ql-active .ql-stroke {
+  stroke: #60a5fa !important;
+}
+
+/* Hover */
+.dark .ql-toolbar button:hover,
+.dark .ql-toolbar .ql-picker-label:hover {
+  color: #ffffff;
+}
+
+.dark .ql-toolbar button:hover .ql-stroke,
+.dark .ql-toolbar .ql-picker-label:hover .ql-stroke {
+  stroke: #ffffff !important;
+}
+
+/* Icon stroke */
+.dark .ql-toolbar .ql-stroke {
+  stroke: #e5e7eb !important;
+}
+
+/* Dropdown menu dark */
+.dark .ql-picker-options {
+  background-color: #2a2a2a !important;
+  color: #e5e7eb !important;
+}
+
+.dark .ql-editor::before {
+  color: #d1d5db !important; /* atau warna terang lainnya */
+  font-style: italic;
+}
+
+
+
+
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

@@ -145,8 +145,8 @@ onMounted(() => {
 <!-- Galeri Section -->
 <section class="px-6 pt-6 w-full max-w-screen-xl mx-auto animate-fade-in">
   <!-- <h2 class="text-xl font-semibold mb-4 text-center">Galeri</h2> -->
-  <div class="relative w-full overflow-hidden rounded-lg shadow-2xl">
-    <div class="flex transition-transform duration-500" :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
+  <div class="relative w-full overflow-hidden rounded-lg dark:border-KKNWhite dark:border-2 shadow-2xl">
+    <div class=" flex transition-transform duration-500" :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
       <div v-for="(item, index) in gallery" :key="index" class="flex-shrink-0 w-full">
         <img :src="item.path" :alt="item.caption || `Gallery Image ${index+1}`" class="w-full h-80 object-cover" />
       </div>
@@ -212,17 +212,17 @@ onMounted(() => {
 
 
 
-    <h2 class="text-lg font-semibold mb-3">👤 Profil RT</h2>
+    <h2 class="text-lg font-semibold mb-3">Profil RT 45</h2>
     <div v-if="profilePending" class="text-gray-600">🔄 Memuat profil...</div>
     <div v-else-if="profileError" class="text-red-600">❌ {{ profileError }}</div>
     <div v-else>
-      <h3 class="font-medium mt-2">📌 Data Inti</h3>
+      <h3 v-if="profileInti" class="font-medium mt-2">Data Inti</h3>
       <ul class="list-disc list-inside mb-10">
         <li v-for="item in profileInti" :key="item.id">{{ item.key }}: {{ item.value }}</li>
       </ul>
       
 
-      <h3 class="font-medium">➕ Data Tambahan</h3>
+      <h3 v-if="profileTambahan != 0" class="font-medium">Data Tambahan</h3>
       <ul class="list-disc list-inside mb-10">
         <li v-for="item in profileTambahan" :key="item.id">{{ item.key }}: {{ item.value }}</li>
       </ul>

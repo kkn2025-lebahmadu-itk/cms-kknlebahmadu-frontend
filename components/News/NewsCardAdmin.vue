@@ -22,13 +22,19 @@
         </article>
       </div>
       <div class="flex space-x-2 mt-2">
-        <!-- <button
+        <button
           @click.stop="goToDetail"
           class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
         >
           Detail
-        </button> -->
-
+        </button>
+        <button
+          v-if="isLoggedIn"
+          @click.stop="$emit('delete', slug)"
+          class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+        >
+          Delete
+        </button>
       </div>
     </div>
   </div>
@@ -48,6 +54,6 @@ defineProps({
 defineEmits(['delete'])
 
 function goToDetail(slug) {
-  router.push(`/berita/${slug}`)
+  router.push(`/admin/berita/${slug}`)
 }
 </script>

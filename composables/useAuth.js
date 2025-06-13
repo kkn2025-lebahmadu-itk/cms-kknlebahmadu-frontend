@@ -45,7 +45,31 @@ export const useAuth = () => {
         }
     }
 
+    const changePassword = async (old_password, new_password) => {
+        try {
+            const { $api } = useNuxtApp()
+            const response = await $api.post('/api/auth/change-password', {
+                old_password,
+                new_password
+            }) // tidak perlu manual pasang headers, default akan otomatis pakai Bearer token
+            return {
+                success: true,
+                data: response.data
+            }
+        }
+        catch (error) {
+            console.log(error)
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Terjadi Kesalahan'
+            }
+        }
+    }
+
+    
     return {
-        register, login
+        register,
+        login,
+        changePassword
     }
 }

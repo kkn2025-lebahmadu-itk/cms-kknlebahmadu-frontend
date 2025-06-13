@@ -7,7 +7,8 @@ export default defineNuxtPlugin((nuxtApp) => {
   const { $getAccessToken } = useNuxtApp()
 
   const api = axios.create({
-    baseURL: 'http://127.0.0.1:8000',
+    baseURL: 'http://rt45telagasari:8000',
+    // baseURL: 'https://6vrvr1p3-8000.asse.devtunnels.ms/',
     withCredentials: true
   })
 

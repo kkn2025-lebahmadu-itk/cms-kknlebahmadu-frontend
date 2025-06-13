@@ -66,7 +66,7 @@ definePageMeta({
 
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-100">
+  <div class="min-h-screen flex items-center justify-center bg-gray-400">
     <form @submit.prevent="handleLogin" class="bg-white p-8 rounded-xl shadow-md w-full max-w-md space-y-6">
       <h2 class="text-2xl font-bold text-center text-gray-800">Login</h2>
 

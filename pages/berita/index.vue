@@ -1,12 +1,7 @@
 <template>
   <div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-6">News</h1>
-    <NuxtLink v-if="isLoggedIn"
-      to="/berita/create"
-      class="inline-block mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-    >
-      Add News
-    </NuxtLink>
+    <h1 class="text-7xl font-bold mb-6">News</h1>
+
 
     <!-- Loading -->
     <div v-if="pending" class="flex justify-center items-center py-12">
@@ -81,8 +76,12 @@ const currentPage = ref(1)
 const postsPerPage = 3
 
 // Ambil list berita dari response
+// const newsList = computed(() => {
+//   return response.value?.results?.data || []
+// })
 const newsList = computed(() => {
-  return response.value?.results?.data || []
+  const list = response.value?.results?.data || []
+  return list.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
 })
 
 // Hitung total halaman

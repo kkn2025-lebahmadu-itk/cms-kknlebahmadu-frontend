@@ -8,7 +8,8 @@ const { fetchAllReport, createReport, deleteReport, response, pending, error } =
 const showModal = ref(false)
 const manualUpload = reactive({
   file: null,
-  is_signed: false
+  is_signed: false,
+  kategori: ''
 })
 
 onMounted(() => {
@@ -48,8 +49,9 @@ const generatePDFBlob = () => {
   doc.text('PELAKSANAAN TUGAS DAN FUNGSI RUKUN TETANGGA (RT) 45', pageWidth / 2, 28, { align: 'center' })
   doc.text('KELURAHAN TELAGASARI', pageWidth / 2, 36, { align: 'center' })
 
+  doc.setFont('Times', 'bold').setFontSize(11)
+  doc.text(`BULAN : ${getBulan().toUpperCase()} ${getTahun()}`, margin, 52)
   doc.setFont('Times', 'normal').setFontSize(11)
-  doc.text(`BULAN : ${getBulan().toUpperCase()} ${getTahun()}`, margin, 48)
 
   const startX = margin, startY = 55
   const colWidths = [10, 30, 130, usableWidth - (10 + 30 + 130)]
@@ -110,15 +112,38 @@ const simpanDanUpload = async () => {
   }
 }
 
+// const uploadManual = async () => {
+//   if (!manualUpload.file) {
+//     alert('Pilih file terlebih dahulu.')
+//     return
+//   }
+
+//   const formData = new FormData()
+//   formData.append('pdf', manualUpload.file)
+//   formData.append('is_signed', manualUpload.is_signed)
+
+//   try {
+//     await createReport(formData)
+//     showModal.value = false
+//     fetchAllReport()
+//     manualUpload.file = null
+//     manualUpload.is_signed = false
+//   } catch (err) {
+//     console.error('❌ Upload manual gagal:', err)
+//   }
+// }
+
+
 const uploadManual = async () => {
-  if (!manualUpload.file) {
-    alert('Pilih file terlebih dahulu.')
+  if (!manualUpload.file || !manualUpload.kategori) {
+    alert('Lengkapi file dan kategori terlebih dahulu.')
     return
   }
 
   const formData = new FormData()
   formData.append('pdf', manualUpload.file)
   formData.append('is_signed', manualUpload.is_signed)
+  formData.append('kategori', manualUpload.kategori) // ← tambahkan ini
 
   try {
     await createReport(formData)
@@ -126,10 +151,12 @@ const uploadManual = async () => {
     fetchAllReport()
     manualUpload.file = null
     manualUpload.is_signed = false
+    manualUpload.kategori = '' // reset juga
   } catch (err) {
     console.error('❌ Upload manual gagal:', err)
   }
 }
+
 
 const hapusLaporan = async (id) => {
   try {
@@ -156,6 +183,16 @@ const hapusLaporan = async (id) => {
           <input type="checkbox" v-model="manualUpload.is_signed" />
           <span>Sudah Ditandatangani</span>
         </label>
+        <!-- Dropdown kategori -->
+<label class="block">
+  <span class="text-sm font-medium">Kategori</span>
+  <select v-model="manualUpload.kategori" class="w-full border rounded px-3 py-2 mt-1">
+    <option disabled value="">-- Pilih Kategori --</option>
+    <option value="kegiatan_swadaya">Laporan Kegiatan Swadaya</option>
+    <option value="dana_operasional">Laporan Dana Operasional</option>
+  </select>
+</label>
+
         <div class="flex justify-end gap-2 mt-4">
           <button @click="showModal = false" class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">Batal</button>
           <button @click="uploadManual" class="px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700">Upload</button>
@@ -178,6 +215,8 @@ const hapusLaporan = async (id) => {
       <tr>
         <th class="border px-2 py-1">ID</th>
         <th class="border px-2 py-1">File</th>
+        <th class="border px-2 py-1">Kategori</th>
+
         <th class="border px-2 py-1">TTD</th>
         <th class="border px-2 py-1">PDF</th>
         <th class="border px-2 py-1">Aksi</th>
@@ -187,6 +226,8 @@ const hapusLaporan = async (id) => {
       <tr v-for="report in response.reports" :key="report.id">
         <td class="border px-2 py-1 text-center">{{ report.id }}</td>
         <td class="border px-2 py-1">{{ report.pdf?.split('/').pop() || "Tidak Ada File" }}</td>
+        <td class="border px-2 py-1 text-center">{{ report.kategori?.replace("_"," ").toUpperCase()  || '-' }}</td>
+
         <td class="border px-2 py-1 text-center">
           <span :class="report.is_signed ? 'text-green-600' : 'text-yellow-600'">
             {{ report.is_signed ? 'Sudah' : 'Belum' }}
